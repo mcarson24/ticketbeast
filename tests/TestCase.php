@@ -26,17 +26,8 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
         return $app;
     }
 
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->disableExceptionHandling();
-    }
-
     protected function disableExceptionHandling()
     {
-        $this->oldExceptionHandler = $this->app->make(ExceptionHandler::class);
-
         $this->app->instance(ExceptionHandler::class, new class extends Handler {
             public function __construct() {}
             public function report(\Exception $e) {}
@@ -44,12 +35,5 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
                 throw $e;
             }
         });
-    }
-
-    protected function withExceptionHandling()
-    {
-        $this->app->instance(ExceptionHandler::class, $this->oldExceptionHandler);
-
-        return $this;
     }
 }

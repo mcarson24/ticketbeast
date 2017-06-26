@@ -23,15 +23,6 @@ class ConcertOrdersController extends Controller
 
         $concert->orderTickets(request('email'), request('ticket_quantity'));
 
-  //   	$order = $concert->orders()->create([
-  //   		'email' => request('email')
-		// ]);
-
-		// foreach (range(1, request('ticket_quantity')) as $i)
-		// {
-		// 	$order->tickets()->create([]);
-		// }
-
     	return response()->json([], 201);
     }
 }

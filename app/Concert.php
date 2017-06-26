@@ -9,6 +9,20 @@ class Concert extends Model
     protected $guarded = [];
     protected $dates = ['date'];
 
+    public function orderTickets($email, $ticketQuantity)
+    {
+        $order = $this->orders()->create([
+            'email' => $email
+        ]);
+
+        foreach (range(1, $ticketQuantity) as $i)
+        {
+            $order->tickets()->create([]);
+        }
+
+        return $order;
+    }
+
     public function scopePublished($query)
     {
         return $query->whereNotNull('published_at');

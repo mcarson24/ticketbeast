@@ -9,7 +9,7 @@ class OrderTest extends TestCase
 	use DatabaseMigrations;
 
     /** @test */
-    public function tickets_are_releases_when_an_order_can_be_cancelled()
+    public function tickets_are_released_when_an_order_is_cancelled()
     {
         $concert = factory(Concert::class)->create();
         $concert->addTickets(10);

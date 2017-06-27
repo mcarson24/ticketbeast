@@ -33,11 +33,9 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function customer_can_purchase_concert_tickets_to_a_published_concert()
 	{
-	    // Create a concert
 	    $concert = factory(Concert::class)->states('published')->create([
 	    	'ticket_price' => 3250
-    	]);
-    	$concert->addTickets(3);
+    	])->addTickets(3);
 
 	    $this->orderTickets($concert, [
 	    	'email' 			=> 'john@example.com',
@@ -48,16 +46,14 @@ class PurchaseTicketsTest extends TestCase
     	$this->assertResponseStatus(201);
 	    $this->assertEquals(9750, $this->paymentGateway->totalCharges());
 
-	    $order = $concert->orders()->where('email', 'john@example.com')->first();
-	    $this->assertNotNull($order);
-	    $this->assertEquals(3, $order->tickets()->count());
+	    $this->assertTrue($concert->hasOrderFor('john@example.com'));
+	    $this->assertEquals(3, $concert->ordersFor('john@example.com')->first()->ticketQuantity());
 	}
 
 	/** @test */
 	public function customer_cannot_purchase_tickets_to_an_unpublished_concert()		
 	{
-	    $concert = factory(Concert::class)->states('unpublished')->create();
-	    $concert->addTickets(3);
+	    $concert = factory(Concert::class)->states('unpublished')->create()->addTickets(3);
 
 	    $this->orderTickets($concert, [
 	    	'email' 			=> 'john@example.com',
@@ -67,14 +63,13 @@ class PurchaseTicketsTest extends TestCase
 
     	$this->assertResponseStatus(404);
     	$this->assertEquals(0, $this->paymentGateway->totalCharges());
-    	$this->assertEquals(0, $concert->orders()->count());
+    	$this->assertFalse($concert->hasOrderFor('john@example.com'));
 	}
 
 	/** @test */
 	public function cannot_purchase_more_tickets_than_remain()
 	{
-	    $concert = factory(Concert::class)->states('published')->create();
-	    $concert->addTickets(50);
+	    $concert = factory(Concert::class)->states('published')->create()->addTickets(50);
 
 	    $this->orderTickets($concert, [
 	    	'email' 			=> 'john@example.com',
@@ -83,7 +78,7 @@ class PurchaseTicketsTest extends TestCase
     	]);
 
     	$this->assertResponseStatus(422);
-    	$this->assertNull($concert->orders()->where('email', 'john@example.com')->first());
+    	$this->assertFalse($concert->hasOrderFor('john@example.com'));
     	$this->assertEquals(0, $this->paymentGateway->totalCharges());
     	$this->assertEquals(50, $concert->ticketsRemaining());
 	}
@@ -100,12 +95,14 @@ class PurchaseTicketsTest extends TestCase
     	]);
 
     	$this->assertResponseStatus(422);
-    	$this->assertNull($this->concert->orders()->where('email', 'john@example.com')->first());
+    	$this->assertFalse($this->concert->hasOrderFor('john@example.com'));
 	}
 
 	/** @test */
 	public function email_is_required_to_purchase_tickets()
 	{
+		$this->concert->addTickets(35);
+
 		$this->orderTickets($this->concert, [
 			'ticket_quantity' 	=> 3,
 	    	'payment_token' 	=> $this->paymentGateway->getValidTestToken()
@@ -117,6 +114,8 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function email_must_be_valid_to_purchase_tickets()
 	{
+		$this->concert->addTickets(35);
+
 	    $this->orderTickets($this->concert, [
 	    	'email' 	=> 'janeexample.com',
 	    	'ticket_quantity' 	=> 3,
@@ -129,6 +128,8 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function ticket_quantity_is_required_to_purchase_tickets()
 	{
+		$this->concert->addTickets(35);
+
 	    $this->orderTickets($this->concert, [
 	    	'email' 	=> 'janeexample.com',
 	    	'payment_token' 	=> $this->paymentGateway->getValidTestToken()
@@ -140,6 +141,8 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function ticket_quantity_must_be_greater_than_zero()
 	{
+		$this->concert->addTickets(35);
+
 	    $this->orderTickets($this->concert, [
 	    	'email' 	=> 'jane@example.com',
 	    	'ticket_quantity' 	=> 0,
@@ -151,7 +154,9 @@ class PurchaseTicketsTest extends TestCase
 
 	/** @test */
 	public function ticket_quantity_must_be_an_integer()
-	{
+	{	
+		$this->concert->addTickets(35);
+
 	 	$this->json('POST', "concerts/{$this->concert->id}/orders", [
 	    	'email' 	=> 'jane@example.com',
 	    	'ticket_quantity' 	=> 's',
@@ -164,6 +169,8 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function a_payment_token_is_required()
 	{
+		$this->concert->addTickets(35);
+
 	 	$this->json('POST', "concerts/{$this->concert->id}/orders", [
 	    	'email' 	=> 'jane@example.com',
 	    	'ticket_quantity' 	=> 's',

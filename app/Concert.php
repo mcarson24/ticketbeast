@@ -38,6 +38,8 @@ class Concert extends Model
         {
             $this->tickets()->create([]);
         }
+
+        return $this;
     }
 
     public function ticketsRemaining()
@@ -68,6 +70,16 @@ class Concert extends Model
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function ordersFor($email)
+    {
+        return $this->orders()->where('email', $email)->get();
+    }
+
+    public function hasOrderFor($email)
+    {   
+        return $this->orders()->where('email', $email)->count() > 0;
     }
 
     public function tickets()

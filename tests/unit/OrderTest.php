@@ -1,12 +1,29 @@
 <?php
 
 use App\Concert;
+use App\Order;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class OrderTest extends TestCase
 {
 	use DatabaseMigrations;
+
+    /** @test */
+    public function creating_an_order_from_tickets_and_email()
+    {
+        $concert = create(Concert::class, ['ticket_price' => 1200])->addTickets(5);
+        
+        $this->assertEquals(5, $concert->ticketsRemaining());
+
+        $order = Order::forTickets($concert->findTickets(3), 'holly@thedog.com');
+
+        $this->assertEquals($order->email, 'holly@thedog.com');
+        $this->assertEquals(3, $order->ticketQuantity());
+        $this->assertEquals(3600, $order->amount);
+
+        $this->assertEquals(2, $concert->fresh()->ticketsRemaining());
+    }
 
     /** @test */
     public function converting_to_an_array()

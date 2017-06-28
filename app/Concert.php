@@ -12,7 +12,6 @@ class Concert extends Model
 
     public function orderTickets($email, $ticketQuantity)
     {
-        // $tickets = $this->tickets()->whereNull('order_id')->take($ticketQuantity)->get();
         $tickets = $this->tickets()->available()->take($ticketQuantity)->get();
 
         if ($tickets->count() < $ticketQuantity)
@@ -21,7 +20,8 @@ class Concert extends Model
         }
 
         $order = $this->orders()->create([
-            'email' => $email
+            'email'     => $email,
+            'amount'    => $ticketQuantity * $this->ticket_price 
         ]);
 
         foreach ($tickets as $ticket)

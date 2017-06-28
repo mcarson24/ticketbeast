@@ -77,6 +77,52 @@ class ConcertTest extends TestCase
     }
 
     /** @test */
+    public function can_reserve_tickets()
+    {
+        $concert = create(Concert::class)->addTickets(5);
+        $this->assertEquals(5, $concert->ticketsRemaining());
+
+        $reservedTickets = $concert->reserveTickets(3);
+
+        $this->assertCount(3, $reservedTickets);
+        $this->assertEquals(2, $concert->ticketsRemaining());
+    }
+
+    /** @test */
+    public function cannot_reserve_tickets_that_have_already_been_purchased()
+    {
+        $concert = create(Concert::class)->addTickets(3);
+
+        $concert->orderTickets('jane@example.com', 2);
+
+        try {
+            $concert->reserveTickets(2);
+        } catch (NotEnoughTicketsRemainException $e) {
+            $this->assertEquals(1, $concert->ticketsRemaining());
+            return;
+        }
+
+        $this->fail('There should not have been enough tickets remaining to fulfill the order.');
+    }
+
+    /** @test */
+    public function cannot_reserve_tickets_that_have_already_been_reserved()
+    {
+        $concert = create(Concert::class)->addTickets(3);
+
+        $concert->reserveTickets(2);
+
+        try {
+            $concert->reserveTickets(2);
+        } catch (NotEnoughTicketsRemainException $e) {
+            $this->assertEquals(1, $concert->ticketsRemaining());
+            return;
+        }
+
+        $this->fail('There should not have been enough tickets remaining to fulfill the reservation.');
+    }
+
+    /** @test */
     public function tickets_remaining_does_not_includes_tickets_that_were_already_allocated()
     {
         $concert = create(Concert::class)->addTickets(10);

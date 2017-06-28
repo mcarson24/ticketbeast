@@ -40,6 +40,14 @@ $factory->define(App\Concert::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Ticket::class, function (Faker\Generator $faker) {
+    return[
+        'concert_id' => function() {
+            return factory(App\Concert::class)->create()->id;
+        }
+    ];
+});
+
 $factory->state(App\Concert::class, 'published', function ($faker) {
     return [
         'published_at' => Carbon::parse('-1 week'),

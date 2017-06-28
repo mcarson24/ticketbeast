@@ -1,5 +1,6 @@
 <?php
 
+use App\Ticket;
 use App\Concert;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -23,5 +24,16 @@ class TicketTest extends TestCase
 
         $this->assertNull($ticket->fresh()->order_id);
         // $this->assertEquals(0, $order->fresh()->tickets()->count());
+    }
+
+    /** @test */
+    public function a_ticket_can_be_reserved()
+    {
+        $ticket = create(Ticket::class);
+        $this->assertNull($ticket->reserved_at);
+
+        $ticket->reserve();
+
+        $this->assertNotNull($ticket->fresh()->reserved_at);
     }
 }

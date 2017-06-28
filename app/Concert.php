@@ -14,12 +14,12 @@ class Concert extends Model
     {
         $tickets = $this->findTickets($ticketQuantity); 
 
-        return $this->createOrder($email, $tickets);
+        return $this->createOrder($email, $tickets, $tickets->sum('price'));
     }
 
-    public function createOrder($email, $tickets)
+    public function createOrder($email, $tickets, $amount)
     {
-        return Order::forTickets($tickets, $email);
+        return Order::forTickets($tickets, $email, $amount);
     }
 
     public function addTickets($quantity)

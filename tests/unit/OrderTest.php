@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 class OrderTest extends TestCase
 {
 	use DatabaseMigrations;
-
+    
     /** @test */
     public function creating_an_order_from_tickets_email_and_amount()
     {

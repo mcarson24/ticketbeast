@@ -47,13 +47,4 @@ class Order extends Model
     {
         return $this->tickets()->count();
     }
-
-    public function cancel()
-    {
-    	$this->tickets->each(function($ticket) {
-    		$ticket->release();
-    	});
-
-    	$this->delete();
-    }	
 }

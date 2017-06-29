@@ -59,3 +59,9 @@ $factory->state(App\Concert::class, 'unpublished', function ($faker) {
         'published_at' => null,
     ];
 });
+
+$factory->state(App\Ticket::class, 'reserved', function ($faker) {
+    return [
+        'reserved_at' => Carbon::now()
+    ];
+});

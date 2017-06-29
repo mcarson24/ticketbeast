@@ -35,4 +35,18 @@ class ReservationTest extends TestCase
 			$ticket->shouldHaveReceived('release');
 		});
 	}
+
+	/** @test */
+	public function can_retrieve_tickets_from_reservations()
+	{
+	    $tickets = collect([
+	    	(object) ['price' => 1200],
+	    	(object) ['price' => 1200],
+	    	(object) ['price' => 1200],
+    	]);
+
+    	$reservation = new Reservation($tickets);
+
+    	$this->assertEquals($tickets, $reservation->tickets());
+	}
 }

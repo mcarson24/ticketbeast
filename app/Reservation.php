@@ -24,4 +24,9 @@ class Reservation
 	{
 		return $this->tickets->sum('price');
 	}
+
+	public function tickets()
+	{
+		return $this->tickets;
+	}
 }

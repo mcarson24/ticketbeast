@@ -79,13 +79,13 @@ class ConcertTest extends TestCase
     /** @test */
     public function can_reserve_tickets()
     {
-        $concert = create(Concert::class)->addTickets(5);
-        $this->assertEquals(5, $concert->ticketsRemaining());
+        $concert = create(Concert::class)->addTickets(3);
+        $this->assertEquals(3, $concert->ticketsRemaining());
 
-        $reservedTickets = $concert->reserveTickets(3);
+        $reservation = $concert->reserveTickets(2);
 
-        $this->assertCount(3, $reservedTickets);
-        $this->assertEquals(2, $concert->ticketsRemaining());
+        $this->assertCount(2, $reservation->tickets());
+        $this->assertEquals(1, $concert->ticketsRemaining());
     }
 
     /** @test */

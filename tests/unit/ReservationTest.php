@@ -1,5 +1,6 @@
 <?php
 
+use App\Billing\FakePaymentGateway;
 use App\Concert;
 use App\Reservation;
 use App\Ticket;
@@ -71,11 +72,13 @@ class ReservationTest extends TestCase
 		$concert = create(Concert::class, ['ticket_price' => 1000]);
         $tickets = create(Ticket::class, ['concert_id' => $concert->id], 3);
 	    $reservation = new Reservation($tickets, 'john@example.com');
+	    $paymentGateway = new FakePaymentGateway;
 
-	    $order = $reservation->complete();
+	    $order = $reservation->complete($paymentGateway, $paymentGateway->getValidTestToken());
 
 	    $this->assertEquals('john@example.com', $order->email);
         $this->assertEquals(3, $order->ticketQuantity());
         $this->assertEquals(3000, $order->amount);
+        $this->assertEquals(3000, $paymentGateway->totalCharges());
 	}
 }

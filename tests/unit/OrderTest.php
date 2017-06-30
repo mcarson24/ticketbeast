@@ -2,6 +2,8 @@
 
 use App\Concert;
 use App\Order;
+use App\Reservation;
+use App\Ticket;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 

@@ -1,9 +1,14 @@
 <?php
 
+use App\Concert;
 use App\Reservation;
+use App\Ticket;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ReservationTest extends TestCase
 {
+	use DatabaseMigrations;
+
 	/** @test */
 	public function calculating_the_total_cost()
 	{
@@ -58,5 +63,19 @@ class ReservationTest extends TestCase
 	    $reservation = new Reservation($tickets, 'holly@thedog.com');
 
 	    $this->assertEquals('holly@thedog.com', $reservation->email());
+	}
+
+	/** @test */
+	public function completing_a_reservation()
+	{	
+		$concert = create(Concert::class, ['ticket_price' => 1000]);
+        $tickets = create(Ticket::class, ['concert_id' => $concert->id], 3);
+	    $reservation = new Reservation($tickets, 'john@example.com');
+
+	    $order = $reservation->complete();
+
+	    $this->assertEquals('john@example.com', $order->email);
+        $this->assertEquals(3, $order->ticketQuantity());
+        $this->assertEquals(3000, $order->amount);
 	}
 }

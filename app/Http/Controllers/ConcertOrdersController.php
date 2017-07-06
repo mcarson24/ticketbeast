@@ -39,7 +39,5 @@ class ConcertOrdersController extends Controller
         } catch (NotEnoughTicketsRemainException $e) {
             return response([], 422);
         }
-
-
     }
 }

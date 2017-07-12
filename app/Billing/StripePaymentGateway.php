@@ -19,7 +19,7 @@ class StripePaymentGateway implements PaymentGateway
 	{
 		try {
 			Charge::create([
-				'amount'	=> 2500,
+				'amount'	=> $amount,
 				'currency'	=> 'usd',
 				'source'	=> $token
 			], ['api_key' => $this->apiKey]);

@@ -1679,9 +1679,6 @@ select.form-control {
 .form-control::-webkit-input-placeholder {
   color: #afb3b5;
 }
-.form-control::-moz-placeholder {
-  color: #afb3b5;
-}
 .form-control:-ms-input-placeholder {
   color: #afb3b5;
 }

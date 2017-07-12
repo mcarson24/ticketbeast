@@ -5,6 +5,9 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
+/**
+ * @group integration
+ */
 class StripePaymentGatewayTest extends TestCase
 {
 	private function lastCharge()

@@ -11,6 +11,13 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
  */
 class StripePaymentGatewayTest extends TestCase
 {
+	protected function setUp()
+	{
+		parent::setUp();
+
+		$this->lastCharge = $this->lastCharge();	
+	}
+
 	private function lastCharge()
 	{
 		return \Stripe\Charge::all(
@@ -37,29 +44,28 @@ class StripePaymentGatewayTest extends TestCase
 	{
 		return \Stripe\Charge::all(
         	[
-        		'limit' 		=> 1,	
-        		'ending_before' => $this->lastCharge->id
+        		'ending_before' => $this->lastCharge ? $this->lastCharge->id : null
     		],
         	['api_key' => config('services.stripe.secret')]
     	)['data'];
 	}
 
-	protected function setUp()
+	protected function getPaymentGateway()
 	{
-		parent::setUp();
-
-		$this->lastCharge = $this->lastCharge();	
+		return new StripePaymentGateway(config('services.stripe.secret'));
 	}
 
     /** @test */
     public function charges_with_a_valid_payment_token_are_successful()
     {
-        $paymentGateway = new StripePaymentGateway(config('services.stripe.secret'));
+        $paymentGateway = $this->getPaymentGateway();
 
-        $paymentGateway->charge(2500, $this->validToken());
+        $newCharges = $paymentGateway->newChargesDuring(function($paymentGateway) {
+	        $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
+        });
         
-        $this->assertCount(1, $this->newCharges());
-    	$this->assertEquals(2500, $this->lastCharge()->amount);
+        $this->assertCount(1, $newCharges);
+    	$this->assertEquals(2500, $newCharges->sum());
     }
 
     /** @test */

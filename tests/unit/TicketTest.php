@@ -24,7 +24,7 @@ class TicketTest extends TestCase
     /** @test */
     public function a_ticket_can_be_reserved()
     {
-        $ticket = create(Ticket::class);
+        $ticket = factory(Ticket::class)->create();
         $this->assertNull($ticket->reserved_at);
 
         $ticket->reserve();

@@ -5,7 +5,7 @@ use App\Billing\PaymentGateway;
 use App\Billing\FakePaymentGateway;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class PurchaseTicketsTest extends TestCase
+class PurchaseTicketsTest extends BrowserKitTestCase
 {
 	use DatabaseMigrations;
 

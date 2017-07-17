@@ -48,6 +48,13 @@ $factory->define(App\Ticket::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Order::class, function (Faker\Generator $faker) {
+    return[
+        'amount' => 5250,
+        'email'  => 'somebody@example.com'
+    ];
+});
+
 $factory->state(App\Concert::class, 'published', function ($faker) {
     return [
         'published_at' => Carbon::parse('-1 week'),

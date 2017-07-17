@@ -14,7 +14,7 @@ class OrderTest extends TestCase
     /** @test */
     public function creating_an_order_from_tickets_email_and_amount()
     {
-        $concert = create(Concert::class)->addTickets(5);
+        $concert = factory(Concert::class)->create()->addTickets(5);
         
         $this->assertEquals(5, $concert->ticketsRemaining());
 
@@ -30,7 +30,7 @@ class OrderTest extends TestCase
     /** @test */
     public function converting_to_an_array()
     {
-        $concert = create(Concert::class, ['ticket_price' => 1200])->addTickets(5);
+        $concert = factory(Concert::class)->create(['ticket_price' => 1200])->addTickets(5);
 
         $order = $concert->orderTickets('duchess@thedog.com', 5);
 

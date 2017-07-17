@@ -56,9 +56,9 @@ class ConcertTest extends TestCase
     }
 
     /** @test */
-    public function can_order_concert_tickers()
+    public function can_order_concert_tickets()
     {
-        $concert = create(Concert::class)->addTickets(3);
+        $concert = factory(Concert::class)->create()->addTickets(3);
 
         $order = $concert->orderTickets('jane@example.com', 3);
 
@@ -69,7 +69,7 @@ class ConcertTest extends TestCase
     /** @test */
     public function can_add_tickets()
     {
-        $concert = create(Concert::class);
+        $concert = factory(Concert::class)->create();
 
         $concert->addTickets(5);
 
@@ -79,7 +79,7 @@ class ConcertTest extends TestCase
     /** @test */
     public function can_reserve_available_tickets()
     {
-        $concert = create(Concert::class)->addTickets(3);
+        $concert = factory(Concert::class)->create()->addTickets(3);
         $this->assertEquals(3, $concert->ticketsRemaining());
 
         $reservation = $concert->reserveTickets(2, 'john@example.com');
@@ -92,7 +92,7 @@ class ConcertTest extends TestCase
     /** @test */
     public function cannot_reserve_tickets_that_have_already_been_purchased()
     {
-        $concert = create(Concert::class)->addTickets(3);
+        $concert = factory(Concert::class)->create()->addTickets(3);
 
         $concert->orderTickets('jane@example.com', 2);
 
@@ -109,7 +109,7 @@ class ConcertTest extends TestCase
     /** @test */
     public function cannot_reserve_tickets_that_have_already_been_reserved()
     {
-        $concert = create(Concert::class)->addTickets(3);
+        $concert = factory(Concert::class)->create()->addTickets(3);
 
         $concert->reserveTickets(2, 'jane@example.com');
 
@@ -126,7 +126,7 @@ class ConcertTest extends TestCase
     /** @test */
     public function tickets_remaining_does_not_includes_tickets_that_were_already_allocated()
     {
-        $concert = create(Concert::class)->addTickets(10);
+        $concert = factory(Concert::class)->create()->addTickets(10);
 
         $concert->orderTickets('joey.tribbiani@daysofourlives.tv', 4);
 

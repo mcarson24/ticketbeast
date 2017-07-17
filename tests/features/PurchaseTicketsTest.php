@@ -5,9 +5,11 @@ use App\Billing\PaymentGateway;
 use App\Billing\FakePaymentGateway;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class PurchaseTicketsTest extends BrowserKitTestCase
+class PurchaseTicketsTest extends TestCase
 {
 	use DatabaseMigrations;
+
+	private $response;
 
 	protected function setUp()
 	{
@@ -19,6 +21,21 @@ class PurchaseTicketsTest extends BrowserKitTestCase
 		$this->concert = factory(Concert::class)->states('published')->create();
 	}
 
+	private function assertResponseStatus($status)
+	{
+		$this->response->assertStatus($status);
+	}
+
+	private function seeJsonSubset($data)
+	{
+		 $this->response->assertJson($data);
+	}
+
+	private function decodeResponseJson()
+	{
+		return $this->response->decodeResponseJson();
+	}
+
 	private function assertValidationError($field)
 	{
 		$this->assertResponseStatus(422);	
@@ -28,7 +45,7 @@ class PurchaseTicketsTest extends BrowserKitTestCase
 	private function orderTickets($concert, $parameters)
 	{
 		$requestA = $this->app['request'];
-		$this->json('POST', "concerts/{$concert->id}/orders", $parameters);
+		$this->response = $this->json('POST', "concerts/{$concert->id}/orders", $parameters);
 		$this->app['request'] = $requestA;
 	}
 
@@ -199,7 +216,7 @@ class PurchaseTicketsTest extends BrowserKitTestCase
 	{	
 		$this->concert->addTickets(35);
 
-	 	$this->json('POST', "concerts/{$this->concert->id}/orders", [
+		$this->orderTickets($this->concert, [
 	    	'email' 	=> 'jane@example.com',
 	    	'ticket_quantity' 	=> 's',
 	    	'payment_token' 	=> $this->paymentGateway->getValidTestToken()
@@ -213,7 +230,7 @@ class PurchaseTicketsTest extends BrowserKitTestCase
 	{
 		$this->concert->addTickets(35);
 
-	 	$this->json('POST', "concerts/{$this->concert->id}/orders", [
+	 	$this->orderTickets($this->concert, [
 	    	'email' 	=> 'jane@example.com',
 	    	'ticket_quantity' 	=> 's',
     	]);

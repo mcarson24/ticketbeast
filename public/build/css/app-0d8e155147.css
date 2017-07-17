@@ -534,6 +534,74 @@ h3 {
 h4 {
   font-size: 1rem;
 }
+a,
+.link {
+  font-weight: 400;
+  color: #29363d;
+  text-decoration: none;
+}
+a:hover,
+.link:hover,
+a:focus,
+.link:focus {
+  color: #0a0d0f;
+  text-decoration: underline;
+}
+a:focus,
+.link:focus {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.link-brand {
+  color: #008bdb;
+}
+.link-brand:hover,
+.link-brand:focus {
+  color: #005a8f;
+}
+.link-brand-soft {
+  color: #2197db;
+}
+.link-brand-soft:hover,
+.link-brand-soft:focus {
+  color: #176999;
+}
+.link-underline {
+  text-decoration: underline;
+}
+.link-plain:hover,
+.link-plain:focus {
+  text-decoration: none;
+}
+.link-soft {
+  color: rgba(41, 54, 61, 0.6);
+}
+.link-soft:hover,
+.link-soft:focus {
+  color: #29363d;
+}
+.link-muted {
+  color: rgba(41, 54, 61, 0.35);
+}
+.link-muted:hover,
+.link-muted:focus {
+  color: #29363d;
+}
+.link-light {
+  color: #ffffff;
+}
+.link-light:hover,
+.link-light:focus {
+  color: #ffffff;
+}
+.link-light-muted {
+  color: rgba(255, 255, 255, 0.6);
+}
+.link-light-muted:hover,
+.link-light-muted:focus {
+  color: rgba(255, 255, 255, 0.9);
+}
 @media (max-width: 543px) {
   .hidden-xs-down {
     display: none !important;
@@ -1488,6 +1556,12 @@ h4 {
   -webkit-box-align: center;
   align-items: center;
 }
+.flex-baseline {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: baseline;
+  align-items: baseline;
+}
 .flex-y-end {
   display: -webkit-box;
   display: flex;
@@ -2036,17 +2110,23 @@ select.form-control {
 .bg-muted {
   background-color: #e8eaeb;
 }
+.bg-gray {
+  background-color: #484e52;
+}
 .bg-dark {
   background-color: #272829;
 }
 .constrain {
   max-width: 33rem;
 }
+.constrain-sm {
+  max-width: 26rem;
+}
 .constrain-lg {
   max-width: 40rem;
 }
-.constrain-sm {
-  max-width: 26rem;
+.constrain-xl {
+  max-width: 48em;
 }
 .m-xs-t-0 {
   margin-top: 0;
@@ -4503,6 +4583,15 @@ select.form-control {
 }
 .text-dark-muted {
   color: rgba(41, 54, 61, 0.35);
+}
+.text-brand {
+  color: #008bdb;
+}
+.text-brand-soft {
+  color: #2197db;
+}
+.text-brand-muted {
+  color: #4da7db;
 }
 .text-em {
   font-style: italic;

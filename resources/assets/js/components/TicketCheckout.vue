@@ -16,7 +16,7 @@
                     <label class="form-label">
                         Qty
                     </label>
-                    <input v-model="quantity" class="form-control">
+                    <input type="number" v-model="quantity" class="form-control">
                 </div>
             </div>
         </div>
@@ -102,7 +102,6 @@
                     payment_token: token.id,
                 }).then(response => {
                     console.log('Charge succeeded.') 
-                    this.processing = false
                 }).catch(response => {
                     this.processing = false
                 })

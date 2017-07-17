@@ -50,8 +50,9 @@ $factory->define(App\Ticket::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Order::class, function (Faker\Generator $faker) {
     return[
-        'amount' => 5250,
-        'email'  => 'somebody@example.com'
+        'amount'                => 5250,
+        'email'                 => 'somebody@example.com',
+        'confirmation_number'   => 'ORDERCONFIRMATION1234'
     ];
 });
 

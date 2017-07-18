@@ -32,6 +32,11 @@ class Ticket extends Model
     	return $this->belongsTo(Concert::class);
     }
 
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+
     public function getPriceAttribute()
     {
     	return $this->concert->ticket_price;

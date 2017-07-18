@@ -1,9 +1,10 @@
 <?php
 
-use App\Billing\FakePaymentGateway;
-use App\Concert;
-use App\Reservation;
 use App\Ticket;
+use App\Concert;
+use Tests\TestCase;
+use App\Reservation;
+use App\Billing\FakePaymentGateway;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ReservationTest extends TestCase

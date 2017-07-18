@@ -24,6 +24,11 @@ class Order extends Model
         return $order;
     }
 
+    public static function findByConfirmationNumber($confirmationNumber)
+    {
+        return static::where('confirmation_number', $confirmationNumber)->firstOrFail();
+    }
+
     public function toArray()
     {
         return [

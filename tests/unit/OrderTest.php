@@ -1,11 +1,12 @@
 <?php
 
-use App\Concert;
 use App\Order;
-use App\Reservation;
 use App\Ticket;
+use App\Concert;
+use Tests\TestCase;
+use App\Reservation;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class OrderTest extends TestCase
 {
@@ -28,12 +29,32 @@ class OrderTest extends TestCase
     }
 
     /** @test */
+    public function retrieving_an_order_by_confirmation_number()
+    {
+        $order = factory(Order::class)->create(['confirmation_number' => 'CONFIRMATION1234']);
+
+        $foundOrder = Order::findByConfirmationNumber('CONFIRMATION1234');
+
+        $this->assertEquals($order->id, $foundOrder->id);
+    }
+
+    /** @test */
+    public function retrieving_a_non_existant_order_by_confirmation_order_throws_an_exception()
+    {
+        try {
+            Order::findByConfirmationNumber('NONEXISTANTCONFIRMATION');
+        } catch (ModelNotFoundException $e) {
+            return;
+        }
+        $this->fail('No matching order was found for the matching confirmation number but, a ModelNotFoundException was not thrown.');
+    }
+
+    /** @test */
     public function converting_to_an_array()
     {
         $concert = factory(Concert::class)->create(['ticket_price' => 1200])->addTickets(5);
 
         $order = $concert->orderTickets('duchess@thedog.com', 5);
-
         $result = $order->toArray();
 
         $this->assertEquals([

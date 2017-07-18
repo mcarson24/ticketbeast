@@ -47,4 +47,16 @@ class RandomOrderConfirmationNumberGeneratorTest extends TestCase
 	    $this->assertFalse(strpos($confirmation_number, '0'));
 	    $this->assertFalse(strpos($confirmation_number, 'O'));
 	}
+
+	/** @test */
+	public function generated_numbers_must_be_unique()
+	{
+		$generator = new RandomOrderConfirmationNumberGenerator;
+
+	    $confirmation_numbers = array_map(function($i) use ($generator) {
+	    	return $generator->generate();
+	    }, range(1, 100));
+	    
+	    $this->assertCount(100, array_unique($confirmation_numbers));
+	}
 }

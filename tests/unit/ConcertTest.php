@@ -1,11 +1,12 @@
 <?php
 
 use App\Concert;
-use Carbon\Carbon;
 use App\Exceptions\NotEnoughTicketsRemainException;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\TestCase;
 
 class ConcertTest extends TestCase
 {
@@ -29,6 +30,16 @@ class ConcertTest extends TestCase
         ]);
 
         $this->assertEquals('5:00pm', $concert->formatted_start_time);
+    }
+
+    /** @test */
+    public function can_get_fromatted_date_with_day()
+    {
+        $concert = factory(Concert::class)->create([
+            'date' => Carbon::parse('2017-06-06 8:00pm')
+        ]);
+
+        $this->assertEquals('Tuesday, June 6th, 2017', $concert->formatted_date_with_day);
     }
 
     /** @test */

@@ -88,12 +88,6 @@
                 })
             },
             purchaseTickets(token) {
-                // console.log({
-                //     email: token.email,
-                //     quantity: this.quantity,
-                //     payment_token: token.id,
-                // })
-
                 this.processing = true
 
                 axios.post(`/concerts/${this.concertId}/orders`, {
@@ -101,6 +95,7 @@
                     ticket_quantity: this.quantity,
                     payment_token: token.id,
                 }).then(response => {
+                    window.location =`/orders/${response.data.confirmation_number}`;
                     console.log('Charge succeeded.') 
                 }).catch(response => {
                     this.processing = false

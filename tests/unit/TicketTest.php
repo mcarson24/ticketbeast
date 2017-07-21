@@ -1,12 +1,12 @@
 <?php
 
-use App\Concert;
 use App\Order;
 use App\Ticket;
+use App\Concert;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
+use App\Facades\TicketCode;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class TicketTest extends TestCase
 {
@@ -32,6 +32,21 @@ class TicketTest extends TestCase
         $ticket->reserve();
 
         $this->assertNotNull($ticket->fresh()->reserved_at);
+    }
+
+    /** @test */
+    public function a_ticket_can_be_claimed_for_an_order()
+    {
+        $order = factory(Order::class)->create();
+        $ticket = factory(Ticket::class)->create(['code' => NULL]);
+        TicketCode::shouldReceive('generate')->andReturn('TICKETCODE1');
+
+        $ticket->claimFor($order);
+
+        // Assert that the ticket is saved to the order
+        $this->assertContains($ticket->id, $order->tickets->pluck('id'));
+        // Assert that the ticket had the expected ticket code generated
+        $this->assertEquals('TICKETCODE1', $ticket->code);
     }
 
     /** @test */

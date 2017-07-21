@@ -2,6 +2,7 @@
 
 use App\Concert;
 use Tests\TestCase;
+use App\Facades\TicketCode;
 use App\Billing\PaymentGateway;
 use App\Billing\FakePaymentGateway;
 use App\Facades\OrderConfirmationNumber;
@@ -14,7 +15,7 @@ class PurchaseTicketsTest extends TestCase
 
 	private $response;
 
-	protected function setUp()
+	public function setUp()
 	{
 		parent::setUp();
 
@@ -58,6 +59,7 @@ class PurchaseTicketsTest extends TestCase
 		$this->disableExceptionHandling();
 
 		OrderConfirmationNumber::shouldReceive('generate')->andReturn('ORDERCONFIRMATION1234');
+		TicketCode::shouldReceive('generateFor')->andReturn('TICKETCODE1', 'TICKETCODE2', 'TICKETCODE3');
 
 	    $concert = factory(Concert::class)->states('published')->create([
 	    	'ticket_price' => 3250

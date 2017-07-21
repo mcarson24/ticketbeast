@@ -11,18 +11,6 @@ class Concert extends Model
     protected $guarded = [];
     protected $dates = ['date'];
 
-    public function orderTickets($email, $ticketQuantity)
-    {
-        $tickets = $this->findTickets($ticketQuantity); 
-
-        return $this->createOrder($email, $tickets, $tickets->sum('price'));
-    }
-
-    public function createOrder($email, $tickets, $amount)
-    {
-        return Order::forTickets($tickets, $email, $amount);
-    }
-
     public function addTickets($quantity)
     {
         foreach (range(1, $quantity) as $i)
@@ -45,7 +33,7 @@ class Concert extends Model
     public function findTickets($quantity)
     {
         $tickets = $this->tickets()->available()->take($quantity)->get();
-
+        
         if ($tickets->count() < $quantity)
         {
             throw new NotEnoughTicketsRemainException;

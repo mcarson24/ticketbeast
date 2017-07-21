@@ -1,31 +1,30 @@
 <?php
 
-use App\Order;
-use App\Ticket;
+use App\Billing\Charge;
 use App\Concert;
-use Tests\TestCase;
+use App\Order;
 use App\Reservation;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use App\Ticket;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 
 class OrderTest extends TestCase
 {
 	use DatabaseMigrations;
     
     /** @test */
-    public function creating_an_order_from_tickets_email_and_amount()
+    public function creating_an_order_from_tickets_email_and_charge()
     {
-        $concert = factory(Concert::class)->create()->addTickets(5);
-        
-        $this->assertEquals(5, $concert->ticketsRemaining());
+        $tickets = factory(Ticket::class, 3)->create();
+        $charge = new Charge(['amount' => 3600, 'card_last_four' => '1234']);
 
-        $order = Order::forTickets($concert->findTickets(3), 'holly@thedog.com', 3600);
+        $order = Order::forTickets($tickets, 'holly@thedog.com', $charge);
 
         $this->assertEquals($order->email, 'holly@thedog.com');
         $this->assertEquals(3, $order->ticketQuantity());
         $this->assertEquals(3600, $order->amount);
-
-        $this->assertEquals(2, $concert->fresh()->ticketsRemaining());
+        $this->assertEquals('1234', $order->card_last_four);
     }
 
     /** @test */

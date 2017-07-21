@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Concert;
+use App\Billing\Charge;
 use Illuminate\Database\Eloquent\Model;
 use App\Facades\OrderConfirmationNumber;
 
@@ -10,12 +11,13 @@ class Order extends Model
 {
     protected $guarded = [];
 
-    public static function forTickets($tickets, $email, $amount)
+    public static function forTickets($tickets, $email, Charge $charge)
     {
         $order = static::create([
             'confirmation_number'   => OrderConfirmationNumber::generate(),
             'email'                 => $email,
-            'amount'                => $amount 
+            'amount'                => $charge->amount(),
+            'card_last_four'        => $charge->cardLastFour(),
         ]);
 
         foreach ($tickets as $ticket)

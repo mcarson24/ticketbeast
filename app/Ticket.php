@@ -30,7 +30,7 @@ class Ticket extends Model
 
     public function claimFor(Order $order)
     {
-        $this->code = TicketCode::generate();
+        $this->code = TicketCode::generateFor($this);
         
         $order->tickets()->save($this);
     }

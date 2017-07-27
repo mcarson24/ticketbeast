@@ -36,7 +36,6 @@ class ConcertOrdersController extends Controller
             Mail::to($order->email)->send(new OrderConfirmationEmail($order));
 
             return response()->json($order, 201);
-
         } catch(PaymentFailedException $e) {
             $reservation->cancel();
             return response([], 422);

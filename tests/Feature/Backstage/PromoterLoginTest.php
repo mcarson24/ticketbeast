@@ -64,4 +64,17 @@ class PromoterLoginTest extends TestCase
     	$response->assertSessionHasErrors('email');
 		$this->assertFalse(auth()->check());
     }
+
+    /** @test */
+    public function logging_out_an_authenticated_user()
+    {
+        $this->disableExceptionHandling();
+        $user = $this->signIn();
+
+        $response = $this->post('logout');
+
+        $response->assertStatus(302)
+                 ->assertRedirect('login');
+        $this->assertFalse(auth()->check());
+    }
 }

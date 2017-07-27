@@ -22,7 +22,7 @@ class PurchaseTicketsTest extends TestCase
 
 		$this->paymentGateway = new FakePaymentGateway;
 		$this->app->instance(PaymentGateway::class, $this->paymentGateway);
-
+		Mail::fake();
 		$this->concert = factory(Concert::class)->states('published')->create();
 	}
 

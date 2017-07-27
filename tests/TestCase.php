@@ -2,11 +2,12 @@
 
 namespace Tests;
 
+use App\User;
 use \Mockery;
 use App\Exceptions\Handler;
+use Tests\CreatesApplication;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Tests\CreatesApplication;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -17,6 +18,13 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
+    }
+
+    protected function signIn(User $user = null)
+    {
+        $this->be($user = $user ?: factory(User::class)->create());
+
+        return $user;
     }
 
     protected function disableExceptionHandling()

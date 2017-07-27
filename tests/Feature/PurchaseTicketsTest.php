@@ -1,11 +1,14 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Concert;
 use Tests\TestCase;
 use App\Facades\TicketCode;
 use App\Billing\PaymentGateway;
 use App\Billing\FakePaymentGateway;
 use App\Mail\OrderConfirmationEmail;
+use Illuminate\Support\Facades\Mail;
 use App\Facades\OrderConfirmationNumber;
 use App\OrderConfirmationNumberGenerator;
 use Illuminate\Foundation\Testing\DatabaseMigrations;

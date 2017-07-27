@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Concert;
 use Carbon\Carbon;
 use Tests\TestCase;

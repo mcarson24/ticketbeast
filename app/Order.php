@@ -19,8 +19,6 @@ class Order extends Model
             'amount'                => $charge->amount(),
             'card_last_four'        => $charge->cardLastFour(),
         ]);
-
-        // $order->tickets()->saveMany($tickets);
         
         $tickets->each->claimFor($order);
         

@@ -1,14 +1,14 @@
 <?php
 
-use App\Concert;
-use App\Exceptions\NotEnoughTicketsRemainException;
+namespace Tests\Unit;
+
 use App\Order;
 use App\Ticket;
+use App\Concert;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
+use App\Exceptions\NotEnoughTicketsRemainException;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ConcertTest extends TestCase
 {

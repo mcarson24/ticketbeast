@@ -1,11 +1,13 @@
 <?php
 
-use App\Concert;
+namespace Tests\Feature;
+
 use App\Order;
 use App\Ticket;
+use App\Concert;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Testcase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ViewOrderTest extends TestCase
 {

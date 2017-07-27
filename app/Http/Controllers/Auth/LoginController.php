@@ -19,9 +19,9 @@ class LoginController extends Controller
         {
             return redirect('login')->withErrors([
                 'email' => 'These credentials do not match our credentials.'
-            ]);
+            ])->withInput(request(['email']));
         }
 
-        return redirect('backstage/concerts');
+        return redirect('backstage/concerts/new');
     }
 }

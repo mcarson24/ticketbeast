@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Concert;
 use App\Billing\PaymentGateway;
+use App\Mail\OrderConfirmationEmail;
+use Illuminate\Support\Facades\Mail;
 use App\Billing\PaymentFailedException;
 use App\Exceptions\NotEnoughTicketsRemainException;
 
@@ -31,6 +33,8 @@ class ConcertOrdersController extends Controller
 
             $order = $reservation->complete($this->paymentGateway, request('payment_token'));
         	
+            Mail::to($order->email)->send(new OrderConfirmationEmail($order));
+
             return response()->json($order, 201);
 
         } catch(PaymentFailedException $e) {

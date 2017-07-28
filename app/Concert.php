@@ -2,9 +2,9 @@
 
 namespace App;
 
-use App\Exceptions\NotEnoughTicketsRemainException;
 use App\Reservation;
 use Illuminate\Database\Eloquent\Model;
+use App\Exceptions\NotEnoughTicketsRemainException;
 
 class Concert extends Model
 {
@@ -55,6 +55,18 @@ class Concert extends Model
     public function scopePublished($query)
     {
         return $query->whereNotNull('published_at');
+    }
+
+    public function isPublished()
+    {
+        return $this->published_at !== null;
+    }
+
+    public function publish()
+    {
+        $this->update(['published_at' => $this->freshTimestamp()]);
+
+        return $this;
     }
 
     public function getFormattedDateAttribute()

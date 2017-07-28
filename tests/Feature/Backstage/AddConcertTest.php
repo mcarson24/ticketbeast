@@ -83,6 +83,7 @@ class AddConcertTest extends TestCase
     		$response->assertStatus(302);
     		$response->assertRedirect("concerts/{$concert->id}");
 
+    		$this->assertTrue($concert->isPublished());
     		$this->assertTrue($concert->user->is($user));
 
     		$this->assertEquals('No Warning', $concert->title);

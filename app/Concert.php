@@ -42,6 +42,11 @@ class Concert extends Model
         return $tickets;
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function ticketsRemaining()
     {
         return $this->tickets()->available()->count();

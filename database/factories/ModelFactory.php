@@ -37,6 +37,9 @@ $factory->define(App\Concert::class, function (Faker\Generator $faker) {
         'state' => 'ON',
         'zip' => '90210',
         'additional_information' => 'Some sample additional information.',
+        'user_id' => function() {
+            return factory(App\User::class)->create()->id;
+        }
     ];
 });
 

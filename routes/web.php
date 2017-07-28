@@ -16,6 +16,7 @@ Route::post('concerts/{id}/orders', 'ConcertOrdersController@store');
 Route::get('orders/{confirmation_number}', 'OrdersController@show');
 
 Route::get('login', 'Auth\LoginController@showLoginForm');
+Route::get('backstage/login', 'Auth\LoginController@showLoginForm');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('auth.logout');
 

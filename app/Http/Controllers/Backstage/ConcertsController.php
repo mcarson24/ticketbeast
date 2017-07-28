@@ -17,7 +17,15 @@ class ConcertsController extends Controller
     public function store()
     {
     	$this->validate(request(), [
-    		'title' => 'required'
+    		'title' 			=> 'required',
+    		'date'				=> 'required|date',
+    		'time'				=> 'required|date_format:g:ia',
+    		'venue'				=> 'required',
+    		'city'				=> 'required',
+    		'state'				=> 'required|max:2',
+    		'zip'				=> 'required',
+    		'ticket_price' 		=> 'required|numeric|min:5',
+    		'ticket_quantity'	=> 'required|numeric|min:1'
 		]);
 
     	$concert = Concert::create([

@@ -21,6 +21,7 @@ class ConcertsController extends Controller
     		'date'				=> 'required|date',
     		'time'				=> 'required|date_format:g:ia',
     		'venue'				=> 'required',
+    		'venue_address'		=> 'required',
     		'city'				=> 'required',
     		'state'				=> 'required|max:2',
     		'zip'				=> 'required',
@@ -28,7 +29,7 @@ class ConcertsController extends Controller
     		'ticket_quantity'	=> 'required|numeric|min:1'
 		]);
 
-    	$concert = Concert::create([
+    	$concert = auth()->user()->concerts()->create([
     		'title' 					=> request('title'),
     		'subtitle' 					=> request('subtitle'),
     		'date'						=> Carbon::parse(vsprintf('%s %s', [request('date'), request('time')])),

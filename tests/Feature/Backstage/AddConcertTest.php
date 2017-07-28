@@ -12,6 +12,24 @@ class AddConcertTest extends TestCase
 {
 	use DatabaseMigrations;
 
+	private function validParams($overrides = [])
+	{
+		return array_merge([
+			'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laraville',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+		], $overrides);
+	}
+
 	private function from($url)
 	{
 		session()->setPreviousUrl(url($url));
@@ -82,20 +100,7 @@ class AddConcertTest extends TestCase
     /** @test */
     public function guests_cannot_add_valid_concerts()
     {
-        $response = $this->post('backstage/concerts', [
-        	'title'						=> 'No Warning',
-        	'subtitle'					=> 'with Cruel Hand and Backtrack',
-        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
-        	'date'						=> '2017-11-18',
-        	'time'						=> '8:00pm',
-        	'venue'						=> 'The Mosh Pit',
-        	'venue_address'				=> '123 Fake St.',
-        	'city'						=> 'Laraville',
-        	'state'						=> 'ON',
-        	'zip'						=> '12345',
-        	'ticket_price'				=> '32.50',
-        	'ticket_quantity'			=> '75'
-    	]);
+        $response = $this->post('backstage/concerts', $this->validParams());
 
     	$response->assertStatus(302);
     	$response->assertRedirect('login');
@@ -108,11 +113,82 @@ class AddConcertTest extends TestCase
     	$this->actingAs(factory(User::class)->create());
 
         $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', $this->validParams(['title' => '']));
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('title');
+    }
+
+    /** @test */
+    public function subtitle_field_is_optional()
+    {
+        $this->disableExceptionHandling();
+
+        $user = factory(User::class)->create();
+
+        $response = $this->actingAs($user)->post('backstage/concerts', $this->validParams(['subtitle' => '']));
+
+    	tap(Concert::first(), function($concert) use ($response) {
+    		$response->assertStatus(302);
+    		$response->assertRedirect("concerts/{$concert->id}");
+
+    		$this->assertNull($concert->subtitle);
+    	});
+    }
+
+    /** @test */
+    public function additional_information_field_is_required()
+    {
+    	$this->disableExceptionHandling();
+
+        $user = factory(User::class)->create();
+
+        $response = $this->actingAs($user)->from('backstage/concerts/new')->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> '',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laraville',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	tap(Concert::first(), function($concert) use ($response) {
+    		$response->assertStatus(302);
+    		$response->assertRedirect("concerts/{$concert->id}");
+
+    		$this->assertEquals('No Warning', $concert->title);
+    		$this->assertEquals('with Cruel Hand and Backtrack', $concert->subtitle);
+    		$this->assertNull($concert->additional_information);
+    		$this->assertEquals(Carbon::parse('2017-11-18 8:00pm'), $concert->date);
+    		$this->assertEquals('The Mosh Pit', $concert->venue);
+    		$this->assertEquals('123 Fake St.', $concert->venue_address);
+    		$this->assertEquals('Laraville', $concert->city);
+    		$this->assertEquals('ON', $concert->state);
+    		$this->assertEquals('12345', $concert->zip);
+    		$this->assertEquals(3250, $concert->ticket_price);
+    		$this->assertEquals(75, $concert->ticketsRemaining());
+    	});
+    }
+
+    /** @test */
+    public function date_is_required()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
         			 	 ->post('backstage/concerts', [
-        	'title'						=> '',
+        	'title'						=> 'No Warning',
         	'subtitle'					=> 'with Cruel Hand and Backtrack',
         	'additional_information'	=> 'You must be at least 19 years to attend this show.',
-        	'date'						=> '2017-11-18',
+        	'date'						=> '',
         	'time'						=> '8:00pm',
         	'venue'						=> 'The Mosh Pit',
         	'venue_address'				=> '123 Fake St.',
@@ -126,6 +202,411 @@ class AddConcertTest extends TestCase
     	$response->assertStatus(302);
     	$response->assertRedirect('backstage/concerts/new');
     	$this->assertEquals(0, Concert::count());
-    	$response->assertSessionHasErrors('title');
+    	$response->assertSessionHasErrors('date');
+    }
+
+    /** @test */
+    public function date_must_be_a_valid_date()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> 'Not a valid date',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laraville',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('date');
+    }
+
+    /** @test */
+    public function time_is_required()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laraville',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('time');
+    }
+
+    /** @test */
+    public function time_must_be_a_valid_time()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> 'not-a-valid-time',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laraville',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('time');
+    }
+
+    /** @test */
+    public function venue_is_required()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> '',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laraville',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('venue');
+    }
+
+    /** @test */
+    public function venue_address_is_required()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '',
+        	'city'						=> 'Laraville',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('venue_address');
+    }
+
+    /** @test */
+    public function city_is_required()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> '',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('city');
+    }
+
+    /** @test */
+    public function state_is_required()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laraville',
+        	'state'						=> '',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('state');
+    }
+
+    /** @test */
+    public function state_cannot_have_a_length_longer_than_two()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laravill',
+        	'state'						=> 'LONG',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('state');
+    }
+
+    /** @test */
+    public function zip_is_required()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laravill',
+        	'state'						=> 'ON',
+        	'zip'						=> '',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('zip');
+    }
+
+    /** @test */
+    public function ticket_price_is_required()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laravill',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('ticket_price');
+    }
+
+    /** @test */
+    public function ticket_price_must_be_numberic()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laravill',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> 'thirtytwofifty',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('ticket_price');
+    }
+
+    /** @test */
+    public function ticket_price_must_be_at_least_5()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laravill',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '2.50',
+        	'ticket_quantity'			=> '75'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('ticket_price');
+    }
+
+    /** @test */
+    public function ticket_quantity_is_required()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laravill',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> ''
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('ticket_quantity');
+    }
+
+    /** @test */
+    public function ticket_quantity_must_be_numeric()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laravill',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> 'seventyfive'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('ticket_quantity');
+    }
+
+    /** @test */
+    public function ticket_quantity_must_be_at_least_1()
+    {
+    	$this->actingAs(factory(User::class)->create());
+
+        $response = $this->from('backstage/concerts/new')
+        			 	 ->post('backstage/concerts', [
+        	'title'						=> 'No Warning',
+        	'subtitle'					=> 'with Cruel Hand and Backtrack',
+        	'additional_information'	=> 'You must be at least 19 years to attend this show.',
+        	'date'						=> '2017-11-18',
+        	'time'						=> '8:00pm',
+        	'venue'						=> 'The Mosh Pit',
+        	'venue_address'				=> '123 Fake St.',
+        	'city'						=> 'Laravill',
+        	'state'						=> 'ON',
+        	'zip'						=> '12345',
+        	'ticket_price'				=> '32.50',
+        	'ticket_quantity'			=> '0'
+    	]);
+
+    	$response->assertStatus(302);
+    	$response->assertRedirect('backstage/concerts/new');
+    	$this->assertEquals(0, Concert::count());
+    	$response->assertSessionHasErrors('ticket_quantity');
     }
 }

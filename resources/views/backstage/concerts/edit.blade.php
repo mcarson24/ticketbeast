@@ -6,8 +6,9 @@
         <h1 class="text-lg">Add a concert</h1>
     </div>
 </div>
-<form class="bg-soft p-xs-y-5" action="/backstage/concerts" method="POST">
+<form class="bg-soft p-xs-y-5" action="{{ route('backstage.concerts.update', $concert) }}" method="POST">
     {{ csrf_field() }}
+    {{ method_field('patch') }}
 
     @if ($errors->any())
     <div class="container m-xs-b-4">

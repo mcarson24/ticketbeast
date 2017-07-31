@@ -6,6 +6,7 @@ use App\User;
 use \Mockery;
 use App\Exceptions\Handler;
 use Tests\CreatesApplication;
+use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
@@ -18,6 +19,10 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
+
+        TestResponse::macro('data', function($key) {
+            return $this->original->getData()[$key];
+        });
     }
 
     protected function signIn(User $user = null)

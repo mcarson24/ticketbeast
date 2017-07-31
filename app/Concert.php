@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Reservation;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\NotEnoughTicketsRemainException;
 
@@ -55,6 +56,11 @@ class Concert extends Model
     public function scopePublished($query)
     {
         return $query->whereNotNull('published_at');
+    }
+
+    public function scopeFromCurrentUser($query)
+    {
+        return $query->where('user_id', auth()->id());
     }
 
     public function isPublished()

@@ -105,7 +105,7 @@
                                 <input name="venue" class="form-control" value="{{ old('venue') }}" placeholder="The Mosh Pit">
                             </div>
                             <div class="form-group {{ $errors->first('venue_address', 'has-error') }}">
-                                <label class="form-label">Stree Address</label>
+                                <label class="form-label">Street Address</label>
                                 <input name="venue_address" class="form-control" value="{{ old('venue_address') }}" placeholder="500 Example Ave.">
                             </div>
                             <div class="row">

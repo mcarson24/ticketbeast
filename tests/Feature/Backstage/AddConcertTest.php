@@ -30,13 +30,6 @@ class AddConcertTest extends TestCase
 		], $overrides);
 	}
 
-	private function from($url)
-	{
-		session()->setPreviousUrl(url($url));
-
-		return $this;
-	}
-
     /** @test */
     public function promoters_can_view_the_add_concerts_form()
     {
@@ -144,7 +137,7 @@ class AddConcertTest extends TestCase
     }
 
     /** @test */
-    public function additional_information_field_is_required()
+    public function additional_information_field_is_optional()
     {
     	$this->disableExceptionHandling();
 
@@ -276,20 +269,6 @@ class AddConcertTest extends TestCase
     }
 
     /** @test */
-    public function state_cannot_have_a_length_longer_than_two()
-    {
-    	$this->actingAs(factory(User::class)->create());
-
-        $response = $this->from('backstage/concerts/new')
-        			 	 ->post('backstage/concerts', $this->validParams(['state' => 'LONG']));
-
-    	$response->assertStatus(302);
-    	$response->assertRedirect('backstage/concerts/new');
-    	$this->assertEquals(0, Concert::count());
-    	$response->assertSessionHasErrors('state');
-    }
-
-    /** @test */
     public function zip_is_required()
     {
     	$this->actingAs(factory(User::class)->create());
@@ -318,7 +297,7 @@ class AddConcertTest extends TestCase
     }
 
     /** @test */
-    public function ticket_price_must_be_numberic()
+    public function ticket_price_must_be_numeric()
     {
     	$this->actingAs(factory(User::class)->create());
 

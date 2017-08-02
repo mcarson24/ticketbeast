@@ -53,6 +53,26 @@ class Concert extends Model
         return $this->tickets()->available()->count();
     }
 
+    public function ticketsSold()
+    {
+        return $this->tickets()->sold()->count();
+    }
+
+    public function totalTickets()
+    {
+        return $this->tickets->count();
+    }
+
+    public function percentSoldOut()
+    {
+        return number_format($this->ticketsSold() / $this->totalTickets() * 100, 2);
+    }
+
+    public function revenueInDollars()
+    {
+        return $this->orders()->sum('amount') / 100;
+    }
+
     public function scopePublished($query)
     {
         return $query->whereNotNull('published_at');
@@ -99,7 +119,8 @@ class Concert extends Model
 
     public function orders()
     {
-        return $this->belongsToMany(Order::class, 'tickets');
+        return Order::whereIn('id', $this->tickets()->pluck('order_id'));
+        // return $this->belongsToMany(Order::class, 'tickets');
     }
 
     public function ordersFor($email)

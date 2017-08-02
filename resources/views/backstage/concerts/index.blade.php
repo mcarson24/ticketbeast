@@ -33,7 +33,7 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <a href="{{ route('backstage.published-concert-orders.index', $concert) }}" class="btn btn-sm btn-secondary m-xs-r-2">Manage</a>
+                                    <a href="#" class="btn btn-sm btn-secondary m-xs-r-2">Manage</a>
                                     <a href="{{ route('concerts.show', $concert) }}" class="link-brand text-sm wt-medium">Public Link</a>
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                                 </div>
                                 <div>
                                     <a href="{{ route('backstage.concerts.edit', $concert) }}" class="btn btn-sm btn-secondary m-xs-r-2">Edit</a>
-                                    <form class="inline-block" method="POST">
+                                    <form class="inline-block" action="{{ route('backstage.published-concerts.store') }}" method="POST">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="concert_id" value="{{ $concert->id }}">
                                         <button type="submit" class="btn btn-sm btn-primary">Publish</button>

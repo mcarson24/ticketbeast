@@ -7,7 +7,6 @@ use App\Concert;
 use Tests\TestCase;
 use PHPUnit\Framework\Assert;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ViewConcertListTest extends TestCase
@@ -17,11 +16,6 @@ class ViewConcertListTest extends TestCase
 	public function setUp()
 	{
 		parent::setUp();
-
-        // Moved this macro into TestCase
-		// TestResponse::macro('data', function($key) {
-		// 	return $this->original->getData()[$key];
-		// });
 
 		Collection::macro('assertContains', function($value) {
 			return Assert::assertTrue($this->contains($value), "Failed asserting that the collection contained:\n{$value}");
@@ -54,9 +48,9 @@ class ViewConcertListTest extends TestCase
         $response = $this->actingAs($user)->get('backstage/concerts');
 
         $response->assertStatus(200);
-        $response->data('concerts')->assertContains($concertA);
-        $response->data('concerts')->assertContains($concertB);
-        $response->data('concerts')->assertContains($concertD);
-        $response->data('concerts')->assertNotContains($concertC);
+        $response->data('unpublishedConcerts')->assertContains($concertA);
+        $response->data('unpublishedConcerts')->assertContains($concertB);
+        $response->data('unpublishedConcerts')->assertContains($concertD);
+        $response->data('unpublishedConcerts')->assertNotContains($concertC);
     }
 }

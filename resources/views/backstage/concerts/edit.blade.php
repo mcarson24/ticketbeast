@@ -162,7 +162,7 @@
                                 <div class="col col-md-6">
                                     <div class="form-group {{ $errors->first('ticket_quantity', 'has-error') }}">
                                         <label class="form-label">Ticket Quantity</label>
-                                        <input name="ticket_quantity" class="form-control" placeholder="250" value="{{ old('ticket_quantity', $concert->tickets->count()) }}">
+                                        <input name="ticket_quantity" class="form-control" placeholder="250" value="{{ old('ticket_quantity', $concert->ticket_quantity) }}">
                                     </div>
                                 </div>
                             </div>

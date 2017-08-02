@@ -12,7 +12,7 @@ class ViewConcertListingTest extends TestCase
     use DatabaseMigrations;
 
     /** @test */
-    function user_can_view_a_published_concert_listing()
+    function promoter_can_view_a_published_concert_listing()
     {
         $concert = factory(Concert::class)->states('published')->create([
             'title' => 'The Red Chord',

@@ -52,7 +52,7 @@ class ConcertsController extends Controller
             'ticket_quantity'           => (int) request('ticket_quantity'),
 		]);
 
-    	return redirect()->route('concerts.show', $concert);
+    	return redirect()->route('backstage.concerts.index');
     }
 
     public function edit($id)

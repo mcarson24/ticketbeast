@@ -26,7 +26,8 @@ class PurchaseTicketsTest extends TestCase
 		$this->paymentGateway = new FakePaymentGateway;
 		$this->app->instance(PaymentGateway::class, $this->paymentGateway);
 		Mail::fake();
-		$this->concert = factory(Concert::class)->states('published')->create();
+		$this->concert = \ConcertFactory::createPublished(['ticket_quantity' => 3]);
+		// $this->concert = factory(Concert::class)->states('published')->create();
 	}
 
 	private function assertResponseStatus($status)
@@ -67,9 +68,10 @@ class PurchaseTicketsTest extends TestCase
 		OrderConfirmationNumber::shouldReceive('generate')->andReturn('ORDERCONFIRMATION1234');
 		TicketCode::shouldReceive('generateFor')->andReturn('TICKETCODE1', 'TICKETCODE2', 'TICKETCODE3');
 
-	    $concert = factory(Concert::class)->states('published')->create([
-	    	'ticket_price' => 3250
-    	])->addTickets(3);
+		$concert = \ConcertFactory::createPublished([
+	    	'ticket_price' => 3250,
+	    	'ticket_quantity' => 3
+    	]);
 
 	    $this->orderTickets($concert, [
 	    	'email' 			=> 'john@example.com',
@@ -118,7 +120,7 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function cannot_purchase_more_tickets_than_remain()
 	{
-	    $concert = factory(Concert::class)->states('published')->create()->addTickets(50);
+		$concert = \ConcertFactory::createPublished(['ticket_quantity' => 50]);
 
 	    $this->orderTickets($concert, [
 	    	'email' 			=> 'john@example.com',
@@ -137,9 +139,10 @@ class PurchaseTicketsTest extends TestCase
 	{
 		$this->disableExceptionHandling();
 
-		$concert = factory(Concert::class)->states('published')->create([
-			'ticket_price' 	=> 1200
-		])->addTickets(3);
+		$concert = \ConcertFactory::createPublished([
+			'ticket_price' => 1200,
+			'ticket_quantity' => 3
+		]);
 
     	$this->paymentGateway->beforeFirstCharge(function ($paymentGateway) use ($concert) {
     		$this->orderTickets($concert, [
@@ -167,8 +170,6 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function an_order_is_not_created_when_payment_fails()
 	{
-    	$this->concert->addTickets(3);
-    	
     	$this->orderTickets($this->concert, [
     		'email' 			=> 'john@example.com',
 	    	'ticket_quantity' 	=> 3,
@@ -183,8 +184,6 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function email_is_required_to_purchase_tickets()
 	{
-		$this->concert->addTickets(35);
-
 		$this->orderTickets($this->concert, [
 			'ticket_quantity' 	=> 3,
 	    	'payment_token' 	=> $this->paymentGateway->getValidTestToken()
@@ -196,8 +195,6 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function email_must_be_valid_to_purchase_tickets()
 	{
-		$this->concert->addTickets(35);
-
 	    $this->orderTickets($this->concert, [
 	    	'email' 	=> 'janeexample.com',
 	    	'ticket_quantity' 	=> 3,
@@ -210,8 +207,6 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function ticket_quantity_is_required_to_purchase_tickets()
 	{
-		$this->concert->addTickets(35);
-
 	    $this->orderTickets($this->concert, [
 	    	'email' 	=> 'janeexample.com',
 	    	'payment_token' 	=> $this->paymentGateway->getValidTestToken()
@@ -223,8 +218,6 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function ticket_quantity_must_be_greater_than_zero()
 	{
-		$this->concert->addTickets(35);
-
 	    $this->orderTickets($this->concert, [
 	    	'email' 	=> 'jane@example.com',
 	    	'ticket_quantity' 	=> 0,
@@ -237,8 +230,6 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function ticket_quantity_must_be_an_integer()
 	{	
-		$this->concert->addTickets(35);
-
 		$this->orderTickets($this->concert, [
 	    	'email' 	=> 'jane@example.com',
 	    	'ticket_quantity' 	=> 's',
@@ -251,8 +242,6 @@ class PurchaseTicketsTest extends TestCase
 	/** @test */
 	public function a_payment_token_is_required()
 	{
-		$this->concert->addTickets(35);
-
 	 	$this->orderTickets($this->concert, [
 	    	'email' 	=> 'jane@example.com',
 	    	'ticket_quantity' 	=> 's',

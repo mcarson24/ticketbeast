@@ -2112,6 +2112,24 @@ select.form-control {
 .numbered-list > li:last-child {
   margin-bottom: 0;
 }
+.table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+}
+.table td,
+.table th {
+  text-align: left;
+  padding: 0.5rem;
+  white-space: nowrap;
+}
+.table th {
+  font-weight: 600 !important;
+  border-bottom: 2px solid #e8eaeb;
+}
+.table td {
+  border-top: 1px solid #e8eaeb;
+}
 [v-cloak] .v-cloak-block {
   display: block;
 }
@@ -4557,6 +4575,9 @@ select.form-control {
 }
 .border-r {
   border-right: 1px solid #e8eaeb;
+}
+.border-b-2 {
+  border-bottom: 2px solid #e8eaeb;
 }
 .border-rounded {
   border-radius: 0.25rem;

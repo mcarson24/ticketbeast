@@ -3,7 +3,9 @@
 namespace Tests\Feature\Backstage;
 
 use App\User;
+use App\Order;
 use App\Concert;
+use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
@@ -18,6 +20,8 @@ class ViewPublishedConcertOrdersTest extends TestCase
         $user = factory(User::class)->create();
         $concert = \ConcertFactory::createPublished(['user_id' => $user->id]);
 
+        $order = \OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('11 days ago')]);
+        dd($order);
         $response = $this->actingAs($user)->get("backstage/published-concerts/{$concert->id}/orders");
 
         $response->assertStatus(200);

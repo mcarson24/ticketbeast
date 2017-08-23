@@ -17,7 +17,12 @@ class ConcertMessagesController extends Controller
 
     public function store($id)
     {
-    	$concert = Concert::find($id);
+        $concert = auth()->user()->concerts()->findOrFail($id);
+
+        $this->validate(request(), [
+            'subject' => 'required',
+            'message' => 'required'
+        ]);
 
     	$message = $concert->attendeeMessages()->create(request(['subject', 'message']));
 

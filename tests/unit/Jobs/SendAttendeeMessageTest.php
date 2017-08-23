@@ -31,6 +31,7 @@ class SendAttendeeMessageTest extends TestCase
 
     	SendAttendeeMessage::dispatch($message);
 
+    	// In 5.5, will need to use Mail::assertQueued
     	Mail::assertSent(AttendeeMessageEmail::class, function($mail) use ($message) {
     		return $mail->hasTo('alex@example.com') &&
     			   $mail->attendeeMessage->is($message);

@@ -123,6 +123,11 @@ class Concert extends Model
         // return $this->belongsToMany(Order::class, 'tickets');
     }
 
+    public function attendeeMessages()
+    {
+        return $this->hasMany(AttendeeMessage::class);
+    }
+
     public function ordersFor($email)
     {
         return $this->orders()->where('email', $email)->get();

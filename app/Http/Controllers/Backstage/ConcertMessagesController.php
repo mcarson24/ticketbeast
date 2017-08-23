@@ -14,4 +14,14 @@ class ConcertMessagesController extends Controller
     	
     	return view('backstage.concert-messages.create', compact('concert'));
     }
+
+    public function store($id)
+    {
+    	$concert = Concert::find($id);
+
+    	$message = $concert->attendeeMessages()->create(request(['subject', 'message']));
+
+    	return redirect()->route('backstage.concert-messages.create', $concert)
+    			 		 ->with(['flash' => 'Your message has been sent.']);
+    }
 }

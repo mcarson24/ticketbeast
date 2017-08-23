@@ -56,4 +56,14 @@ class Order extends Model
     {
         return $this->tickets()->count();
     }
+
+    public function getFormattedAmountAttribute()
+    {
+        return number_format($this->amount / 100, 2);
+    }
+
+    public function getFormattedDateAttribute()
+    {
+        return $this->created_at->format('F d Y, g:ia');
+    }
 }

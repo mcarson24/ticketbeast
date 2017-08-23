@@ -38,7 +38,7 @@ class ConcertOrdersController extends Controller
             return response()->json($order, 201);
         } catch(PaymentFailedException $e) {
             $reservation->cancel();
-            return response([], 422);
+            return response(['Damn'], 422);
         } catch (NotEnoughTicketsRemainException $e) {
             return response([], 422);
         }

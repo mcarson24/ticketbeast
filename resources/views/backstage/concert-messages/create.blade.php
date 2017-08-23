@@ -12,7 +12,7 @@
             @endif
 
             <div class="card p-xs-6">
-                <form action="#" method="POST">
+                <form action="{{ route('backstage.concert-messages.store', $concert) }}" method="POST">
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label class="form-label">Subject</label>

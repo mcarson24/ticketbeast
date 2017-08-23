@@ -1,24 +1,7 @@
 @extends('layouts.backstage')
 
 @section('backstageContent')
-<div class="bg-light p-xs-y-4 border-b">
-    <div class="container">
-        <div class="flex-spaced flex-y-center">
-            <h1 class="text-lg">
-                <strong class="wt-medium">{{ $concert->title }}</strong>
-                <span class="m-xs-x-2 text-dark-muted">/</span>
-                <span class="wt-normal text-dark-soft text-base">
-                    {{ $concert->formatted_date }}
-                </span>
-            </h1>
-            <div class="text-base">
-                <a href="{{ route('backstage.published-concert-orders.index', $concert) }}" class="wt-bold inline-block">
-                    Orders
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+@include('backstage._sub-navbar', ['page' => 'orders'])
 <div class="bg-soft p-xs-y-5">
     <div class="container m-xs-b-4">
         <div class="m-xs-b-6">

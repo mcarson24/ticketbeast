@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class OrderTest extends TestCase
 {
-	use DatabaseMigrations;
+    use DatabaseMigrations;
     
     /** @test */
     public function creating_an_order_from_tickets_email_and_charge()
@@ -44,12 +44,9 @@ class OrderTest extends TestCase
     /** @test */
     public function retrieving_a_non_existant_order_by_confirmation_order_throws_an_exception()
     {
-        try {
-            Order::findByConfirmationNumber('NONEXISTANTCONFIRMATION');
-        } catch (ModelNotFoundException $e) {
-            return;
-        }
-        $this->fail('No matching order was found for the matching confirmation number but, a ModelNotFoundException was not thrown.');
+        $this->expectException(ModelNotFoundException::class);
+        
+        Order::findByConfirmationNumber('NONEXISTANTCONFIRMATION');
     }
 
     /** @test */

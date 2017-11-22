@@ -8,3 +8,4 @@ Homestead.json
 Homestead.yaml
 .env
 .env.dusk.local
+**/.DS_Store

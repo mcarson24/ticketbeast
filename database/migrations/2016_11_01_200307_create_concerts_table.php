@@ -24,10 +24,11 @@ class CreateConcertsTable extends Migration
             $table->string('state');
             $table->string('zip');
             $table->text('additional_information')->nullable();
-            $table->datetime('published_at')->nullable();
             $table->unsignedInteger('user_id');
             $table->integer('ticket_price');
             $table->integer('ticket_quantity');
+            $table->string('poster_image_path');
+            $table->datetime('published_at')->nullable();
             $table->timestamps();
         });
     }

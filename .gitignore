@@ -3,6 +3,7 @@
 /storage/*.key
 /vendor
 /.idea
+/storage/framework/testing/
 Homestead.json
 Homestead.yaml
 .env

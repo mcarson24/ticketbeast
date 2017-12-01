@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backstage;
 use App\Concert;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,21 +27,22 @@ class ConcertsController extends Controller
     public function store()
     {
         $this->validate(request(), [
-            'title'            => 'required',
-            'date'                => 'required|date',
-            'time'                => 'required|date_format:g:ia',
-            'venue'                => 'required',
-            'venue_address'        => 'required',
-            'city'                => 'required',
-            'state'                => 'required',
-            'zip'                => 'required',
-            'ticket_price'        => 'required|numeric|min:5',
-            'ticket_quantity'    => 'required|numeric|min:1'
+            'title'                 => 'required',
+            'date'                  => 'required|date',
+            'time'                  => 'required|date_format:g:ia',
+            'venue'                 => 'required',
+            'venue_address'         => 'required',
+            'city'                  => 'required',
+            'state'                 => 'required',
+            'zip'                   => 'required',
+            'ticket_price'          => 'required|numeric|min:5',
+            'ticket_quantity'       => 'required|numeric|min:1',
+            'poster_image'          => ['image', Rule::dimensions()->minWidth(400)->ratio(8.5/11)]
         ]);
 
         $concert = auth()->user()->concerts()->create([
-            'title'                    => request('title'),
-            'subtitle'                    => request('subtitle'),
+            'title'                     => request('title'),
+            'subtitle'                  => request('subtitle'),
             'additional_information'    => request('additional_information'),
             'date'                      => Carbon::parse(vsprintf('%s %s', [request('date'), request('time')])),
             'venue'                     => request('venue'),

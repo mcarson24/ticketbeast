@@ -18,17 +18,17 @@ class AddConcertTest extends TestCase
     {
         return array_merge([
             'title'                        => 'No Warning',
-            'subtitle'                    => 'with Cruel Hand and Backtrack',
-            'additional_information'    => 'You must be at least 19 years to attend this show.',
-            'date'                        => '2017-11-18',
-            'time'                        => '8:00pm',
+            'subtitle'                     => 'with Cruel Hand and Backtrack',
+            'additional_information'       => 'You must be at least 19 years to attend this show.',
+            'date'                         => '2017-11-18',
+            'time'                         => '8:00pm',
             'venue'                        => 'The Mosh Pit',
             'venue_address'                => '123 Fake St.',
-            'city'                        => 'Laraville',
+            'city'                         => 'Laraville',
             'state'                        => 'ON',
-            'zip'                        => '12345',
-            'ticket_price'                => '32.50',
-            'ticket_quantity'            => '75'
+            'zip'                          => '12345',
+            'ticket_price'                 => '32.50',
+            'ticket_quantity'              => '75',
         ], $overrides);
     }
 
@@ -54,23 +54,24 @@ class AddConcertTest extends TestCase
     /** @test */
     public function adding_a_valid_concert()
     {
+        Storage::fake('s3');
         $this->disableExceptionHandling();
 
         $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->post('backstage/concerts', [
-            'title'                        => 'No Warning',
-            'subtitle'                    => 'with Cruel Hand and Backtrack',
-            'additional_information'    => 'You must be at least 19 years to attend this show.',
-            'date'                        => '2017-11-18',
-            'time'                        => '8:00pm',
-            'venue'                        => 'The Mosh Pit',
-            'venue_address'                => '123 Fake St.',
-            'city'                        => 'Laraville',
-            'state'                        => 'ON',
-            'zip'                        => '12345',
-            'ticket_price'                => '32.50',
-            'ticket_quantity'            => '75'
+            'title'                         => 'No Warning',
+            'subtitle'                      => 'with Cruel Hand and Backtrack',
+            'additional_information'        => 'You must be at least 19 years to attend this show.',
+            'date'                          => '2017-11-18',
+            'time'                          => '8:00pm',
+            'venue'                         => 'The Mosh Pit',
+            'venue_address'                 => '123 Fake St.',
+            'city'                          => 'Laraville',
+            'state'                         => 'ON',
+            'zip'                           => '12345',
+            'ticket_price'                  => '32.50',
+            'ticket_quantity'               => '75',
         ]);
 
         tap(Concert::first(), function ($concert) use ($response, $user) {
@@ -375,14 +376,13 @@ class AddConcertTest extends TestCase
 
         Storage::fake('s3');
         $user = factory(User::class)->create();
-        $file = File::image('concert-poster.png');
+        $file = File::image('concert-poster.png', 850, 1100);
 
         $response = $this->actingAs($user)
                          ->post('backstage/concerts', $this->validParams([
-                        'poster_image' => $file,
+                            'poster_image' => $file,
                     ]));
-        // Verify that that the posert image was saved correctly\
-        //
+        
         tap(Concert::first(), function ($concert) use ($file) {
             $this->assertNotNull($concert->poster_image_path);
             Storage::disk('s3')->exists($concert->poster_image_path);
@@ -391,5 +391,56 @@ class AddConcertTest extends TestCase
                 Storage::disk('s3')->path($concert->poster_image_path)
             );
         });
+    }
+
+    /** @test */
+    public function poster_image_must_be_an_image()
+    {
+        Storage::fake('s3');
+        $user = factory(User::class)->create();
+        $file = File::create('not-a-poster.pdf');
+
+        $response = $this->actingAs(factory(User::class)->create())
+                         ->from('backstage/concerts/new')
+                         ->post('backstage/concerts', $this->validParams(['poster_image' => $file]));
+
+        $response->assertStatus(302);
+        $response->assertRedirect('backstage/concerts/new');
+        $this->assertEquals(0, Concert::count());
+        $response->assertSessionHasErrors('poster_image');
+    }
+
+    /** @test */
+    public function poster_image_must_be_at_least_400_px_wide()
+    {
+        Storage::fake('s3');
+        $user = factory(User::class)->create();
+        $file = File::image('concert-poster.png', 399, 516);
+
+        $response = $this->actingAs(factory(User::class)->create())
+                         ->from('backstage/concerts/new')
+                         ->post('backstage/concerts', $this->validParams(['poster_image' => $file]));
+
+        $response->assertStatus(302);
+        $response->assertRedirect('backstage/concerts/new');
+        $this->assertEquals(0, Concert::count());
+        $response->assertSessionHasErrors('poster_image');
+    }
+
+    /** @test */
+    public function poster_image_must_have_correct_letter_aspect_ratio()
+    {
+        Storage::fake('s3');
+        $user = factory(User::class)->create();
+        $file = File::image('concert-poster.png', 851, 1100);
+
+        $response = $this->actingAs(factory(User::class)->create())
+                         ->from('backstage/concerts/new')
+                         ->post('backstage/concerts', $this->validParams(['poster_image' => $file]));
+
+        $response->assertStatus(302);
+        $response->assertRedirect('backstage/concerts/new');
+        $this->assertEquals(0, Concert::count());
+        $response->assertSessionHasErrors('poster_image');
     }
 }

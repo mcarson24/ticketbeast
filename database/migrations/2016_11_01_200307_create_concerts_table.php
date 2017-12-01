@@ -27,7 +27,7 @@ class CreateConcertsTable extends Migration
             $table->unsignedInteger('user_id');
             $table->integer('ticket_price');
             $table->integer('ticket_quantity');
-            $table->string('poster_image_path');
+            $table->string('poster_image_path')->nullable();
             $table->datetime('published_at')->nullable();
             $table->timestamps();
         });

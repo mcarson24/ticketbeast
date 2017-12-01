@@ -123,8 +123,6 @@ class AddConcertTest extends TestCase
     /** @test */
     public function subtitle_field_is_optional()
     {
-        $this->disableExceptionHandling();
-
         $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->post('backstage/concerts', $this->validParams(['subtitle' => '']));
@@ -142,8 +140,6 @@ class AddConcertTest extends TestCase
     /** @test */
     public function additional_information_field_is_optional()
     {
-        $this->disableExceptionHandling();
-
         $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->from('backstage/concerts/new')
@@ -442,5 +438,26 @@ class AddConcertTest extends TestCase
         $response->assertRedirect('backstage/concerts/new');
         $this->assertEquals(0, Concert::count());
         $response->assertSessionHasErrors('poster_image');
+    }
+
+    /** @test */
+    public function poster_image_is_optional()
+    {
+        $this->disableExceptionHandling();
+
+        $user = factory(User::class)->create();
+
+        $response = $this->actingAs($user)
+                         ->from('backstage/concerts/new')
+                         ->post('backstage/concerts', $this->validParams(['poster_image' => null]));
+
+        tap(Concert::first(), function ($concert) use ($response, $user) {
+            $response->assertStatus(302);
+            $response->assertRedirect(route('backstage.concerts.index'));
+
+            $this->assertTrue($concert->user->is($user));
+
+            $this->assertNull($concert->poster_image_path);
+        });
     }
 }

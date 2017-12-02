@@ -28,8 +28,9 @@ class ProcessPosterImageTest extends TestCase
         ProcessPosterImage::dispatch($concert);
 
         $resizedImage = Storage::disk('public')->get('posters/example-poster.png');
-        list($width) = getimagesizefromstring($resizedImage);
+        list($width, $height) = getimagesizefromstring($resizedImage);
 
         $this->assertEquals(600, $width);
+        $this->assertEquals(776, $height);
     }
 }

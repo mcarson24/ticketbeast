@@ -14,7 +14,7 @@ class PublishedConcertTest extends TestCase
     /** @test */
     public function a_promoter_can_publish_their_own_concert()
     {
-    	$this->disableExceptionHandling();
+    	$this->withExceptionHandling();
         $user = factory(User::class)->create();
         $concert = factory(Concert::class)->states('unpublished')->create([
         	'user_id' => $user->id,

@@ -6,7 +6,7 @@
         <h1 class="text-lg">Add a concert</h1>
     </div>
 </div>
-<form class="bg-soft p-xs-y-5" action="/backstage/concerts" method="POST">
+<form class="bg-soft p-xs-y-5" action="/backstage/concerts" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
 
     @if ($errors->any())
@@ -162,6 +162,12 @@
                                     <div class="form-group {{ $errors->first('ticket_quantity', 'has-error') }}">
                                         <label class="form-label">Ticket Quantity</label>
                                         <input name="ticket_quantity" class="form-control" placeholder="250" value="{{ old('ticket_quantity') }}">
+                                    </div>
+                                </div>
+                                <div class="col col-md6">
+                                    <div class="form-group {{ $errors->first('poster_image', 'has-error') }}">
+                                        <label class="form-label">Concert Poster</label>
+                                        <input type="file" name="poster_image" class="form-control" accept="image/*">
                                     </div>
                                 </div>
                             </div>

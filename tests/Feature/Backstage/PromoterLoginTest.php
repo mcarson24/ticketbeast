@@ -13,7 +13,7 @@ class PromoterLoginTest extends TestCase
     /** @test */
     public function logging_in_with_valid_credentials()
     {
-    	$this->disableExceptionHandling();
+    	$this->withExceptionHandling();
         $user = factory(User::class)->create([
         	'email' => 'jane@example.com',
         	'password' => bcrypt('super-secret-password')
@@ -32,7 +32,7 @@ class PromoterLoginTest extends TestCase
     /** @test */
     public function logging_in_with_invalid_credentials()
     {
-    	$this->disableExceptionHandling();
+    	$this->withExceptionHandling();
         $user = factory(User::class)->create([
         	'email' => 'jane@example.com',
         	'password' => bcrypt('super-secret-password')
@@ -53,7 +53,7 @@ class PromoterLoginTest extends TestCase
     /** @test */
     public function logging_in_with_an_account_that_does_not_exist()
     {
-    	$this->disableExceptionHandling();
+    	$this->withExceptionHandling();
 
     	$response = $this->post('login', [
     		'email' => 'nonexistantUser@example.com',
@@ -68,7 +68,7 @@ class PromoterLoginTest extends TestCase
     /** @test */
     public function logging_out_an_authenticated_user()
     {
-        $this->disableExceptionHandling();
+        $this->withExceptionHandling();
         $user = $this->signIn();
 
         $response = $this->post('logout');

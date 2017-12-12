@@ -61,7 +61,7 @@ class PurchaseTicketsTest extends TestCase
     /** @test */
     public function customer_can_purchase_concert_tickets_to_a_published_concert()
     {
-        $this->disableExceptionHandling();
+        $this->withExceptionHandling();
 
         Mail::fake();
 
@@ -137,7 +137,7 @@ class PurchaseTicketsTest extends TestCase
     /** @test */
     public function cannot_purchase_tickets_that_another_user_is_trying_to_purchase()
     {
-        $this->disableExceptionHandling();
+        $this->withExceptionHandling();
 
         $concert = \ConcertFactory::createPublished([
             'ticket_price' => 1200,

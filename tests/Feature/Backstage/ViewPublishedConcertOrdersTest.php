@@ -16,7 +16,7 @@ class ViewPublishedConcertOrdersTest extends TestCase
     /** @test */
     public function a_promoter_can_view_the_orders_of_their_own_published_concert()
     {
-        $this->disableExceptionHandling();
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $concert = \ConcertFactory::createPublished(['user_id' => $user->id]);
 
@@ -30,7 +30,7 @@ class ViewPublishedConcertOrdersTest extends TestCase
     /** @test */
     public function a_promoter_can_view_the_10_most_recent_orders_for_their_published_concert()
     {
-        $this->disableExceptionHandling();
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $concert = \ConcertFactory::createPublished(['user_id' => $user->id]);
 

@@ -17,7 +17,7 @@ class MessageAttendeesTest extends TestCase
     /** @test */
     public function a_promoter_can_view_the_message_form_for_their_concert()
     {
-        $this->disableExceptionHandling();
+        $this->withExceptionHandling();
 
         $user = factory(User::class)->create();
         $concert = factory(Concert::class)->create(['user_id' => $user->id]);
@@ -53,7 +53,7 @@ class MessageAttendeesTest extends TestCase
     /** @test */
     public function a_promoter_can_send_a_new_message()
     {
-    	$this->disableExceptionHandling();
+    	$this->withExceptionHandling();
 
     	Queue::fake();
         $user = factory(User::class)->create();

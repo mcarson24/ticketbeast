@@ -371,18 +371,19 @@ class AddConcertTest extends TestCase
     {
         $this->disableExceptionHandling();
 
+        Event::fake(ConcertAdded::class);
         Storage::fake('public');
         $user = factory(User::class)->create();
         $file = File::image('concert-poster.png', 850, 1100);
 
-        $response = $this->actingAs($user)
-                         ->post('backstage/concerts', $this->validParams([
-                            'poster_image' => $file,
-                    ]));
-        
+        $this->actingAs($user)->post('backstage/concerts', $this->validParams([
+                    'poster_image' => $file,
+        ]));
+
         tap(Concert::first(), function ($concert) use ($file) {
             $this->assertNotNull($concert->poster_image_path);
             Storage::disk('public')->assertExists($concert->poster_image_path);
+
             $this->assertFileEquals(
                 $file->getPathName(),
                 Storage::disk('public')->path($concert->poster_image_path)

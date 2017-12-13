@@ -61,20 +61,24 @@ $factory->define(App\Order::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->state(App\Concert::class, 'published', function ($faker) {
+$factory->state(App\Concert::class, 'published', function (Faker\Generator $faker) {
     return [
         'published_at' => Carbon::parse('-1 week'),
     ];
 });
 
-$factory->state(App\Concert::class, 'unpublished', function ($faker) {
+$factory->state(App\Concert::class, 'unpublished', function (Faker\Generator $faker) {
     return [
         'published_at' => null,
     ];
 });
 
-$factory->state(App\Ticket::class, 'reserved', function ($faker) {
+$factory->state(App\Ticket::class, 'reserved', function (Faker\Generator $faker) {
     return [
         'reserved_at' => Carbon::now()
     ];
+});
+
+$factory->define(App\Invitation::class, function (Faker\Generator $faker) {
+    return [];
 });

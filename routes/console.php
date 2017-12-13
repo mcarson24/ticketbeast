@@ -21,7 +21,7 @@ Artisan::command('inspire', function () {
 
 Artisan::command('invite-promoter {email}', function($email) {
 	$invitation = Invitation::create([
-		'code'		=> InvitationCode::generate(),
-		'email'		=> $email
-	]);
+		'email'		=> $email,
+		'code'		=> InvitationCode::generate()
+	])->send();
 })->describe('Invite a new promoter to create a TicketBeast account.');

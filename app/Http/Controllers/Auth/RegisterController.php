@@ -11,6 +11,13 @@ class RegisterController extends Controller
     public function register()
     {
         $invitation = Invitation::findByCode(request('invitation_code'));
+        
+        abort_if ($invitation->user_id !== null, 404);
+
+        request()->validate([
+            'email'     => 'required|email|unique:users',
+            'password'  => 'required'
+        ]);
 
         $user = User::create([
             'email'     => request('email'),

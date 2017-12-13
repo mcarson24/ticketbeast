@@ -19,6 +19,7 @@ Route::get('login', 'Auth\LoginController@showLoginForm');
 Route::get('backstage/login', 'Auth\LoginController@showLoginForm');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('auth.logout');
+Route::post('register', 'Auth\RegisterController@register')->name('auth.register');
 
 Route::get('invitations/{code}', 'InvitationsController@show');
 

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\TicketCodeGenerator;
 use App\Billing\PaymentGateway;
+use App\InvitationCodeGenerator;
 use App\HashIdsTicketCodeGenerator;
 use App\Billing\StripePaymentGateway;
 use Laravel\Dusk\DuskServiceProvider;
@@ -46,5 +47,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PaymentGateway::class, StripePaymentGateway::class);
         $this->app->bind(OrderConfirmationNumberGenerator::class, RandomOrderConfirmationNumberGenerator::class);
         $this->app->bind(TicketCodeGenerator::class, HashIdsTicketCodeGenerator::class);
+        $this->app->bind(InvitationCodeGenerator::class, RandomOrderConfirmationNumberGenerator::class);
     }
 }

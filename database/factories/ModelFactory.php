@@ -79,5 +79,8 @@ $factory->state(App\Ticket::class, 'reserved', function (Faker\Generator $faker)
 });
 
 $factory->define(App\Invitation::class, function (Faker\Generator $faker) {
-    return [];
+    return [
+        'email' => 'someone@example.com',
+        'code'  => 'TESTCODE1234'
+    ];
 });

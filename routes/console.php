@@ -1,5 +1,7 @@
 <?php
 
+use App\Invitation;
+use App\Facades\InvitationCode;
 use Illuminate\Foundation\Inspiring;
 
 /*
@@ -16,3 +18,10 @@ use Illuminate\Foundation\Inspiring;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
+
+Artisan::command('invite-promoter {email}', function($email) {
+	$invitation = Invitation::create([
+		'code'		=> InvitationCode::generate(),
+		'email'		=> $email
+	]);
+})->describe('Invite a new promoter to create a TicketBeast account.');

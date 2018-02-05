@@ -18,7 +18,7 @@
         "phpunit/phpunit": "~6.0",
         "symfony/css-selector": "3.1.*",
         "symfony/dom-crawler": "3.1.*",
-        "laravel/dusk": "^1.1",
+        "laravel/dusk": "^2.0.10",
         "laravel/tinker": "^1.0",
         "filp/whoops": "~2.0"
     },

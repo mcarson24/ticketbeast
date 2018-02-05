@@ -15,8 +15,8 @@ class PromoterLoginTest extends DuskTestCase
     public function logging_in_successfully()
     {
         $user = factory(User::class)->create([
-            'email' => 'jane@example.com',
-            'password' => bcrypt('super-secret-password')
+            'email'     => 'jane@example.com',
+            'password'  => bcrypt('super-secret-password')
         ]);
 
         $this->browse(function (Browser $browser) {
@@ -32,8 +32,8 @@ class PromoterLoginTest extends DuskTestCase
     public function logging_in_with_invalid_credentials()
     {
         $user = factory(User::class)->create([
-            'email' => 'jane@example.com',
-            'password' => bcrypt('super-secret-password')
+            'email'     => 'jane@example.com',
+            'password'  => bcrypt('super-secret-password')
         ]);
 
         $this->browse(function (Browser $browser) {

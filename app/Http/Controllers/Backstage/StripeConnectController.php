@@ -8,6 +8,11 @@ use App\Http\Controllers\Controller;
 
 class StripeConnectController extends Controller
 {
+    public function connect()
+    {
+        return view('backstage/stripe-connect.connect');
+    }
+
     public function authorizeRedirect()
     {
     	$url = vsprintf('%s?%s', [

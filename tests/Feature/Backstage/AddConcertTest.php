@@ -40,7 +40,7 @@ class AddConcertTest extends TestCase
         $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->get('backstage/concerts/new');
-
+        
         $response->assertStatus(200);
     }
 

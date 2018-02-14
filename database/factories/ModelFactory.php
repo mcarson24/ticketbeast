@@ -21,7 +21,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'email' => $faker->unique()->safeEmail,
         'password' => '$2y$10$54Tfs2x18n7XpXh1jiv5HeuN0r8K96bV59ttdHs7d7OEuqz/xijXa', // 'secret'
         'remember_token' => str_random(10),
-        'stripe_account_id' => 'test_account_123',
+        'stripe_account_id' => 'test_account_1234',
         'stripe_access_token' => 'test_token'
 
     ];

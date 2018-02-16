@@ -1,14 +1,18 @@
-# [Test Driven Laravel](https://adamwathan.me/test-driven-laravel/) 
+# [Test Driven Laravel](https://course.testdrivenlaravel.com/) 
 
-__by [Adam Wathan](https://adamwathan.me).__
+__created by [Adam Wathan](https://adamwathan.me).__
 
 ---
 
 A comprehensive step-by-step video course on designing robust Laravel applications with TDD.
 
-$149 until February 16th, $249 thereafter.
+[Purchase the course here](https://course.testdrivenlaravel.com/#get-the-course)
 
-[Purchase the course here](https://course.testdrivenlaravel.com/early-access).
+or 
+
+[here to purchase with PayPal](https://gumroad.com/l/XyOrd/launch-promo).
+
+$149 until February 16th, $249 thereafter.
 
 ---
 
